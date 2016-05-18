@@ -6,7 +6,7 @@ import os
 import time
 import glob
 
-# global variables
+# global variables (speriod controls the frequency of sensor readings)
 speriod=(15*60)-1
 dbname='/var/www/templog.db'
 
@@ -17,9 +17,12 @@ def log_temperature(temp):
 
     conn=sqlite3.connect(dbname)
     curs=conn.cursor()
-
+    
     curs.execute("INSERT INTO temps values(datetime('now'), (?))", (temp,))
-
+    
+    # commented out SQL execute for when I figure out how to add another table for humidity 
+    #curs.execute("INSERT INTO temps values(datetime('now'), (?))", (temp,))
+    
     # commit the changes
     conn.commit()
 
@@ -41,6 +44,9 @@ def display_data():
 
 # get temerature
 # returns None on error, or the temperature as a float
+
+"""we're going to have to replace this entire function here and interface with the adafruit module instead (or PIGPIO)"""
+
 def get_temp(devicefile):
 
     try:
@@ -71,11 +77,14 @@ def get_temp(devicefile):
 def main():
 
     # enable kernel modules
-    os.system('sudo modprobe w1-gpio')
-    os.system('sudo modprobe w1-therm')
+    # I don't think we need these anymore
+    #os.system('sudo modprobe w1-gpio')
+    #os.system('sudo modprobe w1-therm')
 
     # search for a device file that starts with 28
-    devicelist = glob.glob('/sys/bus/w1/devices/28*')
+    #devicelist = glob.glob('/sys/bus/w1/devices/28*')
+    
+    # replace with a csv/.txt??
     if devicelist=='':
         return None
     else:
