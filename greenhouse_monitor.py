@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon May 16 23:11:07 2016
-
-@author: Tanner
-"""
-
 #!/usr/bin/env python
 
 import sqlite3
@@ -86,6 +79,8 @@ def main():
     while True:
 
         # get the temperature from the device file
+        # even though this just says temperature, the get_temp() function is now actually pulling both humidity AND temp
+        # which are called to this one instance here I guess
         temperature = get_temp()
         if temperature != None:
             print "temperature,humdity="+str(temperature)
@@ -96,6 +91,7 @@ def main():
             print "temperature,humidity="+str(temperature)
 
             # Store the temperature in the database
+            #currently broken
         log_temperature(temperature)
 
         # display the contents of the database
