@@ -20,6 +20,9 @@ gpio.setup(4, gpio.IN)
 conn=sqlite3.connect(dbname)
 curs=conn.cursor()
 curs.execute("CREATE TABLE temps (timestamp DATETIME, temp NUMERIC, humid NUMERIC);")
+conn.close()
+
+
 
 # store the temperature in the database
 def log_temperature(temp, humid):
