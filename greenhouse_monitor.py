@@ -11,11 +11,15 @@ speriod=(5)-1
 dbname='templog.db'
 sensor = Adafruit_DHT
 
-
+#gpio.setup(14, gpio.OUT)
 gpio.setmode(gpio.BCM)
 gpio.setup(4, gpio.IN)
-#gpio.setup(14, gpio.OUT)
 
+
+# creates the SQL table
+conn=sqlite3.connect(dbname)
+curs=conn.cursor()
+curs.execute("CREATE TABLE temps (timestamp DATETIME, temp NUMERIC, humid NUMERIC);")
 
 # store the temperature in the database
 def log_temperature(temp, humid):
