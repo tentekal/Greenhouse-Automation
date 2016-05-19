@@ -53,7 +53,7 @@ def display_data():
 
 def get_temp():
 
-    dataWrite = open('greenhouse_data.txt', 'a')
+    #dataWrite = open('greenhouse_data.txt', 'a')
     #dataDump = open('greenhouse_datadump.txt', 'a')
     humidity, temperature = sensor.read_retry(Adafruit_DHT.DHT11, 4)
     now = datetime.now()
@@ -61,9 +61,9 @@ def get_temp():
     print 'Temp = {0:0.1f}*C Humidity = {1:0.1f}%'.format(temperature, humidity)
     h = str(humidity)
     t = str(temperature)
-    dataWrite.write(str(now) + ",")
+    #dataWrite.write(str(now) + ",")
     #dataDump.write((h) + "," + (t) + "\n")
-    dataWrite.close()
+    #dataWrite.close()
     tempvalue = float(temperature)/1000
     temhumid = float(humidity)/1000
     return tempvalue, temhumid
