@@ -18,15 +18,13 @@ gpio.setup(4, gpio.IN)
 
 
 # store the temperature in the database
-def log_temperature(temp):
+def log_temperature(temp, humid):
 
     conn=sqlite3.connect(dbname)
     curs=conn.cursor()
     
     curs.execute("INSERT INTO temps values(datetime('now'), (?))", (temp,))
-    
-    # commented out SQL execute for when I figure out how to add another table for humidity 
-    #curs.execute("INSERT INTO temps values(datetime('now'), (?))", (temp,))
+    curs.execute("INSERT INTO temps values(datetime('now'), (?))", (humid,))
     
     # commit the changes
     conn.commit()
@@ -81,18 +79,18 @@ def main():
         # get the temperature from the device file
         # even though this just says temperature, the get_temp() function is now actually pulling both humidity AND temp
         # which are called to this one instance here I guess
-        temperature = get_temp()
+        temperature, humidity = get_temp()
         if temperature != None:
             print "temperature,humdity="+str(temperature)
         else:
             # Sometimes reads fail on the first attempt
             # so we need to retry
-            temperature = get_temp()
+            temperature, humidity = get_temp()
             print "temperature,humidity="+str(temperature)
 
             # Store the temperature in the database
             #currently broken
-        log_temperature(temperature)
+        log_temperature(temperature, humidity)
 
         # display the contents of the database
         display_data()
