@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon May 16 23:11:07 2016
+
+@author: Tanner
+"""
+
 #!/usr/bin/env python
 
 import sqlite3
@@ -8,7 +15,7 @@ import Adafruit_DHT
 
 # global variables (speriod controls the frequency of sensor readings)
 speriod=(5)-1
-dbname='/home/pi/Documents/Python_Projects/Greenhouse-Automation-master/templog.db'
+dbname='templog.db'
 sensor = Adafruit_DHT
 
 
