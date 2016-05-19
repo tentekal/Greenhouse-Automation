@@ -1,15 +1,20 @@
 #!/usr/bin/env python
 
 import sqlite3
-
-import os
+import RPi.GPIO as gpio
 import time
-import glob
+from datetime import datetime
+import Adafruit_DHT
 
 # global variables (speriod controls the frequency of sensor readings)
-speriod=(15*60)-1
-dbname='/var/www/templog.db'
+speriod=(5)-1
+dbname='templog.db'
+sensor = Adafruit_DHT
 
+
+gpio.setmode(gpio.BCM)
+gpio.setup(4, gpio.IN)
+#gpio.setup(14, gpio.OUT)
 
 
 # store the temperature in the database
@@ -42,33 +47,28 @@ def display_data():
 
 
 
-# get temerature
+# get temerature, humidity
 # returns None on error, or the temperature as a float
+# modified to write humidity, temperature to csv formatted .txt 
 
-"""we're going to have to replace this entire function here and interface with the adafruit module instead (or PIGPIO)"""
+def get_temp():
 
-def get_temp(devicefile):
+    #dataWrite = open('greenhouse_data.txt', 'a')
+    #dataDump = open('greenhouse_datadump.txt', 'a')
+    humidity, temperature = sensor.read_retry(Adafruit_DHT.DHT11, 4)
+    now = datetime.now()
+    print now
+    print 'Temp = {0:0.1f}*C Humidity = {1:0.1f}%'.format(temperature, humidity)
+    h = str(humidity)
+    t = str(temperature)
+    #dataWrite.write(str(now) + ",")
+    #dataDump.write((h) + "," + (t) + "\n")
+    #dataWrite.close()
+    tempvalue = float(temperature)/1000
+    temhumid = float(humidity)/1000
+    return tempvalue, temhumid
+    print str(tempvalue)+"!!!!!"
 
-    try:
-        fileobj = open(devicefile,'r')
-        lines = fileobj.readlines()
-        fileobj.close()
-    except:
-        return None
-
-    # get the status from the end of line 1 
-    status = lines[0][-4:-1]
-
-    # is the status is ok, get the temperature from line 2
-    if status=="YES":
-        print status
-        tempstr= lines[1][-6:-1]
-        tempvalue=float(tempstr)/1000
-        print tempvalue
-        return tempvalue
-    else:
-        print "There was an error."
-        return None
 
 
 
@@ -76,46 +76,33 @@ def get_temp(devicefile):
 # This is where the program starts 
 def main():
 
-    # enable kernel modules
-    # I don't think we need these anymore
-    #os.system('sudo modprobe w1-gpio')
-    #os.system('sudo modprobe w1-therm')
+    while True:
 
-    # search for a device file that starts with 28
-    #devicelist = glob.glob('/sys/bus/w1/devices/28*')
-    
-    # replace with a csv/.txt??
-    if devicelist=='':
-        return None
-    else:
-        # append /w1slave to the device file
-        w1devicefile = devicelist[0] + '/w1_slave'
+        # get the temperature from the device file
+        # even though this just says temperature, the get_temp() function is now actually pulling both humidity AND temp
+        # which are called to this one instance here I guess
+        temperature = get_temp()
+        if temperature != None:
+            print "temperature,humdity="+str(temperature)
+        else:
+            # Sometimes reads fail on the first attempt
+            # so we need to retry
+            temperature = get_temp()
+            print "temperature,humidity="+str(temperature)
 
-
-#    while True:
-
-    # get the temperature from the device file
-    temperature = get_temp(w1devicefile)
-    if temperature != None:
-        print "temperature="+str(temperature)
-    else:
-        # Sometimes reads fail on the first attempt
-        # so we need to retry
-        temperature = get_temp(w1devicefile)
-        print "temperature="+str(temperature)
-
-        # Store the temperature in the database
-    log_temperature(temperature)
+            # Store the temperature in the database
+            #currently broken
+        log_temperature(temperature)
 
         # display the contents of the database
-#        display_data()
-
-#        time.sleep(speriod)
+        display_data()
+            
+        #LED to signal success
+        #gpio.output(14, True)
+        #sleep(.1)
+        #gpio.output(14, False)
+        time.sleep(speriod)
 
 
 if __name__=="__main__":
     main()
-
-
-
-
