@@ -64,8 +64,8 @@ def get_temp():
     #dataWrite.write(str(now) + ",")
     #dataDump.write((h) + "," + (t) + "\n")
     #dataWrite.close()
-    tempvalue = float(temperature)/1000
-    temhumid = float(humidity)/1000
+    tempvalue = float(temperature)
+    temhumid = float(humidity)
     return tempvalue, temhumid
     print str(tempvalue)+"!!!!!"
 
