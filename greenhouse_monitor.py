@@ -3,15 +3,16 @@
 import sqlite3
 import RPi.GPIO as gpio
 import time
-from datetime import datetime
+import datetime
 import Adafruit_DHT
-
+#I commented ---------Changed: <date>------------- on parts that I disabled
+#for testing on MY computer (different file paths, gpio pins, etc.)
 # global variables (speriod controls the frequency of sensor readings)
-speriod=(5)-1
+speriod=(5)-1 #-------------Changed: 19-May----------------
 dbname='templog.db'
 sensor = Adafruit_DHT
 
-#gpio.setup(14, gpio.OUT)
+#gpio.setup(14, gpio.OUT) --------------Changed: 19-May------------------
 gpio.setmode(gpio.BCM)
 gpio.setup(4, gpio.IN)
 
@@ -19,7 +20,9 @@ gpio.setup(4, gpio.IN)
 # creates the SQL table
 conn=sqlite3.connect(dbname)
 curs=conn.cursor()
-curs.execute("CREATE TABLE temps (timestamp DATETIME, temp NUMERIC, humid NUMERIC);")
+curs.execute("CREATE TABLE IF NOT EXISTS temps (timestamp VARCHAR2(20), temp VARCHAR2(20), humid VARCHAR2(20));")
+#Changed datatypes to VARCHAR2 of length 20 to remove NOT NULL constraints.
+#Probably won't throw an error when no data is entered, just gives a null value for the column
 conn.close()
 
 
@@ -30,8 +33,7 @@ def log_temperature(now, temp, humid):
     conn=sqlite3.connect(dbname)
     curs=conn.cursor()
     
-    #curs.execute("INSERT INTO temps values(datetime('now'), (?))", (temp,))
-    #curs.execute("INSERT INTO temps values(datetime('now'), (?))", (humid,))
+    curs.execute("INSERT INTO temps values(?, ?, ?);", (now, temp, humid)) #?'s match strings (%s in mysql)
     
     # commit the changes
     conn.commit()
@@ -45,7 +47,7 @@ def display_data():
     conn=sqlite3.connect(dbname)
     curs=conn.cursor()
 
-    for row in curs.execute("SELECT * FROM temps"):
+    for row in curs.execute("SELECT timestamp as time, temp as tempC, humid as RH FROM temps;"):
         print str(row[0])+"	"+str(row[1])
 
     conn.close()
@@ -55,7 +57,8 @@ def display_data():
 # get temerature, humidity
 # returns None on error, or the temperature as a float
 # modified to write humidity, temperature to csv formatted .txt 
-
+#----------Changed: 19-May------------------
+#removed error catching for diagnostics
 def get_temp():
 
     #dataWrite = open('greenhouse_data.txt', 'a')
@@ -72,7 +75,7 @@ def get_temp():
     tempvalue = float(temperature)
     temhumid = float(humidity)
     return now, tempvalue, temhumid
-    print str(tempvalue)+"!!!!!"
+    print str(tempvalue)
 
 
 
