@@ -25,13 +25,13 @@ conn.close()
 
 
 # store the temperature in the database
-def log_temperature(temp, humid):
-
+def log_temperature(now, temp, humid):
+    
     conn=sqlite3.connect(dbname)
     curs=conn.cursor()
     
-    curs.execute("INSERT INTO temps values(datetime('now'), (?))", (temp,))
-    curs.execute("INSERT INTO temps values(datetime('now'), (?))", (humid,))
+    #curs.execute("INSERT INTO temps values(datetime('now'), (?))", (temp,))
+    #curs.execute("INSERT INTO temps values(datetime('now'), (?))", (humid,))
     
     # commit the changes
     conn.commit()
@@ -71,7 +71,7 @@ def get_temp():
     #dataWrite.close()
     tempvalue = float(temperature)
     temhumid = float(humidity)
-    return tempvalue, temhumid
+    return now, tempvalue, temhumid
     print str(tempvalue)+"!!!!!"
 
 
@@ -92,12 +92,12 @@ def main():
         else:
             # Sometimes reads fail on the first attempt
             # so we need to retry
-            temperature, humidity = get_temp()
+            now, temperature, humidity = get_temp()
             print "temperature,humidity="+str(temperature)
 
             # Store the temperature in the database
             #currently broken
-        log_temperature(temperature, humidity)
+        log_temperature(now, temperature, humidity)
 
         # display the contents of the database
         display_data()
