@@ -8,7 +8,7 @@ import Adafruit_DHT
 
 # global variables (speriod controls the frequency of sensor readings)
 speriod=(5)-1
-dbname='templog.db'
+dbname='/var/www/templog.db'
 sensor = Adafruit_DHT
 
 #gpio.setup(14, gpio.OUT)
