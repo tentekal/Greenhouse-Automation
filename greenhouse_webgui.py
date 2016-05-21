@@ -7,8 +7,8 @@ import cgitb
 
 
 # global variables
-speriod=(15*60)-1
-dbname='/var/www/templog.db'
+speriod=(5)-1
+dbname='templog.db'
 
 
 
