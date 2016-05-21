@@ -3,7 +3,7 @@
 import sqlite3
 import RPi.GPIO as gpio
 import time
-from datetime import datetime
+import datetime as dt
 import Adafruit_DHT
 
 # global variables (speriod controls the frequency of sensor readings)
@@ -58,7 +58,7 @@ def display_data():
 def get_temp():
 
     humidity, temperature = sensor.read_retry(Adafruit_DHT.DHT11, 4)
-    now = datetime.now()
+    now = dt.datetime.now().isoformat()
     print now
     print 'Temp = {0:0.1f}*C Humidity = {1:0.1f}%'.format(temperature, humidity)
     h = str(humidity)
@@ -81,7 +81,7 @@ def main():
         # get the temperature from the device file
         # even though this just says temperature, the get_temp() function is now actually pulling both humidity AND temp
         # which are called to this one instance here I guess
-        temperature, humidity = get_temp()
+        now, temperature, humidity = get_temp()
         if temperature != None:
             print "temperature,humdity="+str(temperature)
         else:
