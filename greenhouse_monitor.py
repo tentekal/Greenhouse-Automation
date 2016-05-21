@@ -19,9 +19,10 @@ gpio.setup(4, gpio.IN)
 # creates the SQL table
 conn=sqlite3.connect(dbname)
 curs=conn.cursor()
-curs.execute("CREATE TABLE temps (timestamp DATETIME, temp NUMERIC, humid NUMERIC);")
-conn.close()
-
+curs.execute("CREATE TABLE IF NOT EXISTS temps (timestamp VARCHAR2(20), temp VARCHAR2(20), humid VARCHAR2(20));")
+#Changed datatypes to VARCHAR2 of length 20 to remove NOT NULL constraints.
+#Probably won't throw an error when no data is entered, just gives a null value for the column
+curs.close()
 
 
 # store the temperature in the database
