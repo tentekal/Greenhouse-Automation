@@ -30,8 +30,7 @@ def log_temperature(now, temp, humid):
     conn=sqlite3.connect(dbname)
     curs=conn.cursor()
     
-    #curs.execute("INSERT INTO temps values(datetime('now'), (?))", (temp,))
-    #curs.execute("INSERT INTO temps values(datetime('now'), (?))", (humid,))
+    curs.execute("INSERT INTO temps values(?, ?, ?);", (now, temp, humid)) #?'s match strings (%s in my sql)
     
     # commit the changes
     conn.commit()
@@ -45,8 +44,8 @@ def display_data():
     conn=sqlite3.connect(dbname)
     curs=conn.cursor()
 
-    for row in curs.execute("SELECT * FROM temps"):
-        print str(row[0])+"	"+str(row[1])
+    for row in curs.execute("SELECT * timestamp as time, temp as tempC, humid as RH FROM temps;"):
+        print str(row[0])+"	       "+str(row[1])
 
     conn.close()
 
@@ -54,25 +53,20 @@ def display_data():
 
 # get temerature, humidity
 # returns None on error, or the temperature as a float
-# modified to write humidity, temperature to csv formatted .txt 
 
 def get_temp():
 
-    #dataWrite = open('greenhouse_data.txt', 'a')
-    #dataDump = open('greenhouse_datadump.txt', 'a')
     humidity, temperature = sensor.read_retry(Adafruit_DHT.DHT11, 4)
     now = datetime.now()
     print now
     print 'Temp = {0:0.1f}*C Humidity = {1:0.1f}%'.format(temperature, humidity)
     h = str(humidity)
     t = str(temperature)
-    #dataWrite.write(str(now) + ",")
-    #dataDump.write((h) + "," + (t) + "\n")
-    #dataWrite.close()
+
     tempvalue = float(temperature)
     temhumid = float(humidity)
     return now, tempvalue, temhumid
-    print str(tempvalue)+"!!!!!"
+    print str(tempvalue)
 
 
 
