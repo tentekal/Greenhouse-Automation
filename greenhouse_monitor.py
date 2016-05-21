@@ -45,7 +45,7 @@ def display_data():
     conn=sqlite3.connect(dbname)
     curs=conn.cursor()
 
-    for row in curs.execute("SELECT * timestamp as time, temp as tempC, humid as RH FROM temps;")
+    for row in curs.execute("SELECT  timestamp as time, temp as tempC, humid as RH FROM temps;"):
         print str(row[0])+"	       "+str(row[1])
 
     conn.close()
@@ -67,7 +67,7 @@ def get_temp():
     tempvalue = float(temperature)
     temhumid = float(humidity)
     return now, tempvalue, temhumid
-    print str(tempvalue)
+    #print str(tempvalue)
 
 
 
@@ -88,7 +88,7 @@ def main():
             # Sometimes reads fail on the first attempt
             # so we need to retry
             now, temperature, humidity = get_temp()
-            print "temperature,humidity="+str(temperature)
+            #print "temperature,humidity="+str(temperature)
 
             # Store the temperature in the database
             #currently broken
