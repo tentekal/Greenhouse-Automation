@@ -45,7 +45,7 @@ def display_data():
     conn=sqlite3.connect(dbname)
     curs=conn.cursor()
 
-    for row in curs.execute("SELECT * timestamp as time, temp as tempC, humid as RH FROM temps;"):
+    for row in curs.execute("SELECT * timestamp as time, temp as tempC, humid as RH FROM temps;")
         print str(row[0])+"	       "+str(row[1])
 
     conn.close()
