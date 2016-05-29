@@ -7,7 +7,6 @@ import cgitb
 
 
 # global variables
-speriod=(5)-1
 dbname='/var/www/templog.db'
 
 
@@ -55,13 +54,13 @@ def get_data(interval):
 def create_table(rows):
     chart_table=""
 
-    for row in rows[:-1]:
-        rowstr="['{0}', {1}],\n".format(str(row[0]),str(row[1]))
+    for row in rows[:-2]:
+        rowstr="['{0}', {1}, {2},],\n".format(str(row[0]),str(row[1]),str(row[2]))
         chart_table+=rowstr
 
     row=rows[-1]
-    rowstr="['{0}', {1}]\n".format(str(row[0]),str(row[1]))
-    chart_table+=rowstr
+    rowstr="['{0}', {1}, {2},]\n".format(str(row[0]),str(row[1]),str(row[2]))
+    chart_table += rowstr
 
     return chart_table
 
@@ -72,18 +71,18 @@ def print_graph_script(table):
 
     # google chart snippet
     chart_code="""
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-      google.load("visualization", "1", {packages:["corechart"]});
+      google.load("current", {'packages':["corechart"]});
       google.setOnLoadCallback(drawChart);
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
-          ['Time', 'Temperature'],
-%s
+          ['Time', 'Temperature', 'Humidity'],
+            %s
         ]);
 
         var options = {
-          title: 'Temperature'
+          title: 'Sensor Readings'
         };
 
         var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
@@ -98,7 +97,7 @@ def print_graph_script(table):
 
 # print the div that contains the graph
 def show_graph():
-    print "<h2>Temperature Chart</h2>"
+    print "<h2>Temperature/Humidity Chart</h2>"
     print '<div id="chart_div" style="width: 900px; height: 500px;"></div>'
 
 
@@ -156,7 +155,7 @@ def show_stats(option):
 
 def print_time_selector(option):
 
-    print """<form action="/cgi-bin/webgui.py" method="POST">
+    print """<form action="/cgi-bin/greenhouse_webgui.py" method="POST">
         Show the temperature logs for  
         <select name="timeinterval">"""
 
@@ -243,11 +242,11 @@ def main():
     print "<html>"
     # print the head section including the table
     # used by the javascript for the chart
-    printHTMLHead("Raspberry Pi Temperature Logger", table)
+    printHTMLHead("Raspberry Pi Temperature and Humidity Logger", table)
 
     # print the page body
     print "<body>"
-    print "<h1>Raspberry Pi Temperature Logger</h1>"
+    print "<h1>Raspberry Pi Temperature and Humidity Logger</h1>"
     print "<hr>"
     print_time_selector(option)
     show_graph()
