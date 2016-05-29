@@ -2,17 +2,17 @@
 
 import sqlite3
 import RPi.GPIO as gpio
-import time
+from time import sleep
 import datetime as dt
 import Adafruit_DHT
 
 # global variables (speriod controls the frequency of sensor readings)
-speriod=(5)-1
+speriod=(600) #10 minutes sleep time because crontab was being shit
 dbname='/var/www/templog.db'
 sensor = Adafruit_DHT
 
-#gpio.setup(14, gpio.OUT)
 gpio.setmode(gpio.BCM)
+#gpio.setup(14, gpio.OUT) #optional status LED
 gpio.setup(4, gpio.IN)
 
 
@@ -46,7 +46,7 @@ def display_data():
     curs=conn.cursor()
 
     for row in curs.execute("SELECT  timestamp as time, temp as tempC, humid as RH FROM temps;"):
-        print str(row[0])+"	       "+str(row[1])
+        #print str(row[0])+"	       "+str(row[1])
 
     conn.close()
 
@@ -83,7 +83,7 @@ def main():
         # which are called to this one instance here I guess
         now, temperature, humidity = get_temp()
         if temperature != None:
-            print "temperature,humdity="+str(temperature)
+             "temperature,humdity="+str(temperature)
         else:
             # Sometimes reads fail on the first attempt
             # so we need to retry
